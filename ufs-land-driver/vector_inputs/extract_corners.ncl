@@ -16,7 +16,7 @@ newfile = addfile(outname,"c")
 
 ; set the maximum dimension
 
-maskfile = addfile(fixfile_path+atm_res+"/"+atm_res+"."+ocn_res+"_oro_data.tile1.nc","r")
+maskfile = addfile(fixfile_path+atm_res+"."+ocn_res+"/"+atm_res+"."+ocn_res+"_oro_data.tile1.nc","r")
 maskdims = getfiledimsizes(maskfile)
 
 maxdim = maskdims(0)*maskdims(1)*6
@@ -34,8 +34,8 @@ do itile = 1,6
 
 print("Starting tile: "+itile)
 
- maskfile = addfile(fixfile_path+atm_res+"/"+atm_res+"."+ocn_res+"_oro_data.tile"+itile+".nc","r")
- cornfile = addfile(fixfile_path+atm_res+"/"+atm_res+"_grid.tile"+itile+".nc","r")
+ maskfile = addfile(fixfile_path+atm_res+"."+ocn_res+"/"+atm_res+"."+ocn_res+"_oro_data.tile"+itile+".nc","r")
+ cornfile = addfile(fixfile_path+atm_res+"."+ocn_res+"/"+atm_res+"_grid.tile"+itile+".nc","r")
 
  inmask = maskfile->land_frac 
  inlat  = maskfile->geolat

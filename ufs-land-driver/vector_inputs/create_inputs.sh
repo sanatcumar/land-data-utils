@@ -14,6 +14,8 @@
 #
 # -- Tell the batch system to set the working directory to the current working directory
 #SBATCH --chdir=.
+#SBATCH -e log
+#SBATCH -o log
 #
 # -- Specify a maximum wallclock
 # -- C96  : ~1 minute
@@ -38,7 +40,7 @@ module load ncl/6.6.2
 atm_res="C96"
 ocn_res="mx100"
 grid_version="hr3"
-fixfile_path="/scratch1/NCEPDEV/global/glopara/fix/orog/"
+fixfile_path="/scratch2/NCEPDEV/stmp1/Sanath.Kumar/my_grids/pnnl_lai/"
 grid_extent="global"
 
 #################################################################################
@@ -47,12 +49,12 @@ grid_extent="global"
 
 # set full fix file based on grid version
 
-if [ $grid_version = "hr3" ]; then 
-  fixfile_path=$fixfile_path"20231027/"
-else
-  echo "ERROR: unknown fixfile_path $fixfile_path"
-  exit 1
-fi
+#if [ $grid_version = "hr3" ]; then 
+#  fixfile_path=$fixfile_path"20231027/"
+#else
+#  echo "ERROR: unknown fixfile_path $fixfile_path"
+#  exit 1
+#fi
 
 # the default location for output files is $atm_res.$ocn_res
 
@@ -62,13 +64,13 @@ else
   output_path=$atm_res.$ocn_res.$grid_extent"/"
 fi
 
-if [ -d $output_path ]; then 
-  echo "ERROR: directory $output_path exists and overwriting is prevented"
-  echo "ERROR: remove $output_path and resubmit"
-  exit 2
-else
+#if [ -d $output_path ]; then 
+#  echo "ERROR: directory $output_path exists and overwriting is prevented"
+#  echo "ERROR: remove $output_path and resubmit"
+#  exit 2
+#else
   mkdir -p $output_path
-fi
+#fi
 
 # create the strings for the ncl command line
 

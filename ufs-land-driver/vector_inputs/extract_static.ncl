@@ -59,6 +59,9 @@ vegetation_greenness = new((/12,maxdim/),float)
   vegetation_greenness!1 = "location"
   vegetation_greenness@units = "%"
   vegetation_greenness@long_name = "Monthly Green Vegetation"
+leaf_area_index = vegetation_greenness
+  leaf_area_index@units = "m2/m2"
+  leaf_area_index@long_name = "leaf area index"
 visible_black_sky_albedo = vegetation_greenness
   visible_black_sky_albedo@units = "-"
   visible_black_sky_albedo@long_name = "Visible Black Sky Albedo"
@@ -106,7 +109,7 @@ z0_monthly = vegetation_greenness
 lai_monthly = vegetation_greenness
   lai_monthly@units = "m2/m2"
   lai_monthly@long_name = "Leaf Area Index"
-  lai_monthly = 4.0
+  lai_monthly =0.0
 albedo_monthly = vegetation_greenness
   albedo_monthly@units = "-"
   albedo_monthly@long_name = "Total Albedo"
@@ -118,15 +121,16 @@ do itile = 1,6
 
 print("Starting tile: "+itile)
 
- maskfile = addfile(fixfile_path+atm_res+"/"+atm_res+"."+ocn_res+"_oro_data.tile"+itile+".nc","r")
- typefile = addfile(fixfile_path+atm_res+"/sfc/"+atm_res+"."+ocn_res+".vegetation_type.tile"+itile+".nc","r")
- mxalfile = addfile(fixfile_path+atm_res+"/sfc/"+atm_res+"."+ocn_res+".maximum_snow_albedo.tile"+itile+".nc","r")
- slopfile = addfile(fixfile_path+atm_res+"/sfc/"+atm_res+"."+ocn_res+".slope_type.tile"+itile+".nc","r")
- albdfile = addfile(fixfile_path+atm_res+"/sfc/"+atm_res+"."+ocn_res+".snowfree_albedo.tile"+itile+".nc","r")
- subtfile = addfile(fixfile_path+atm_res+"/sfc/"+atm_res+"."+ocn_res+".substrate_temperature.tile"+itile+".nc","r")
- grenfile = addfile(fixfile_path+atm_res+"/sfc/"+atm_res+"."+ocn_res+".vegetation_greenness.tile"+itile+".nc","r")
- soilfile = addfile(fixfile_path+atm_res+"/sfc/"+atm_res+"."+ocn_res+".soil_type.tile"+itile+".nc","r")
- colrfile = addfile(fixfile_path+atm_res+"/sfc/"+atm_res+"."+ocn_res+".soil_color.tile"+itile+".nc","r")
+ maskfile = addfile(fixfile_path+atm_res+"."+ocn_res+"/"+atm_res+"."+ocn_res+"_oro_data.tile"+itile+".nc","r")
+ typefile = addfile(fixfile_path+atm_res+"."+ocn_res+"/sfc/"+atm_res+"."+ocn_res+".vegetation_type.tile"+itile+".nc","r")
+ mxalfile = addfile(fixfile_path+atm_res+"."+ocn_res+"/sfc/"+atm_res+"."+ocn_res+".maximum_snow_albedo.tile"+itile+".nc","r")
+ slopfile = addfile(fixfile_path+atm_res+"."+ocn_res+"/sfc/"+atm_res+"."+ocn_res+".slope_type.tile"+itile+".nc","r")
+ albdfile = addfile(fixfile_path+atm_res+"."+ocn_res+"/sfc/"+atm_res+"."+ocn_res+".snowfree_albedo.tile"+itile+".nc","r")
+ subtfile = addfile(fixfile_path+atm_res+"."+ocn_res+"/sfc/"+atm_res+"."+ocn_res+".substrate_temperature.tile"+itile+".nc","r")
+ grenfile = addfile(fixfile_path+atm_res+"."+ocn_res+"/sfc/"+atm_res+"."+ocn_res+".vegetation_greenness.tile"+itile+".nc","r")
+ soilfile = addfile(fixfile_path+atm_res+"."+ocn_res+"/sfc/"+atm_res+"."+ocn_res+".soil_type.tile"+itile+".nc","r")
+ colrfile = addfile(fixfile_path+atm_res+"."+ocn_res+"/sfc/"+atm_res+"."+ocn_res+".soil_color.tile"+itile+".nc","r")
+ laifile  = addfile(fixfile_path+atm_res+"."+ocn_res+"/sfc/"+atm_res+"."+ocn_res+".leaf_area_index.tile"+itile+".nc","r")
 
  inmask = maskfile->land_frac 
  inlat  = maskfile->geolat
@@ -235,6 +239,7 @@ print("done with deep temp and max snow, step 4 of 7")
 
 do imo = 0, 11
  ingren = grenfile->vegetation_greenness(imo,:,:)
+ inlai  = laifile->leaf_area_index(imo,:,:)
  
 nloc = total_loc
 
@@ -244,16 +249,19 @@ nloc = total_loc
    if(inmask(idim0,idim1).gt.0) then
      nloc = nloc + 1
      vegetation_greenness(imo,nloc)     = (/ ingren(idim0,idim1) /)
+     lai_monthly(imo,nloc)     = (/ inlai(idim0,idim1) /)
    end if
    
  end do
  end do
  
 print("done with greenness month: "+(imo+1))
+print("done with LAI monthly: "+(imo+1))
 
 end do
 
 delete(ingren)
+delete(inlai)
 
 print("done with greenness, step 5 of 7")
 
